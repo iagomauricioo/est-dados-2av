@@ -13,6 +13,10 @@ class Stack:
     def isEmpty(self):
         return (self.items == [])
 
+    def see_stack(self):
+        for i, item in enumerate(self):
+            print(f"{i + 1}º {item}")
+
 class Queue:
     def __init__(self):
         self.items = []
@@ -32,6 +36,14 @@ class Queue:
     def size(self):
         return len(self.items)
 
+    def __iter__(self):
+        return iter(self.items)
+
+    def see_queue(self):
+        for i, item in enumerate(self):
+            print(f"{i + 1}º {item}")
+
+
 def clear_console():
     if os.name == 'posix':
         os.system('clear')
@@ -39,6 +51,7 @@ def clear_console():
         os.system('cls')
     else:
         print("Sistema operacional não suportado. Não é possível limpar o console.")
+
 
 estoque_de_produtos = []
 pedidos_de_compra = Queue()
@@ -50,7 +63,7 @@ while True:
     print('2. Remover um produto do estoque')
     print('3. Registrar um novo pedido de comprar')
     print('4. Processar um pedido de compra, removendo o produto do estoque')
-    print('5. Registrar uma nova vendda')
+    print('5. Registrar uma nova venda')
     print('6. Desfazer a última venda realizada, recolocando o produto no estoque')
     print('7. Encerrar programa')
     print('----------------------------------//----------------------------------')
@@ -87,16 +100,23 @@ while True:
             pedido = input("Seu pedido: ")
             pedidos_de_compra.enqueue(pedido)
             clear_console()
+            pedidos_de_compra.see_queue()
             print("\nPedido registrado!\n")
             
         case 4:
-            estoque_remover = pedidos_de_compra[0]
             pedidos_de_compra.dequeue()
-            estoque_de_produtos.pop(estoque_remover)
+            estoque_de_produtos.pop(0)
+            clear_console()
+            pedidos_de_compra.see_queue()
             print("Pedido processado. Estoque atualizado.")
         case 5:
-            venda = input("")
-            vendas.push()
+            venda = input('Digite o que foi vendido: ')
+            if venda in estoque_de_produtos:
+                estoque_de_produtos.pop(venda)
+                vendas.push(venda)
+            clear_console()
+            vendas.see_stack()
+            print('Venda realizada. Estoque atualizado.')
         case 6:
             input()
         case 7:
