@@ -1,7 +1,48 @@
-lista_de_produtos = []
-fila_pedidos_de_compra = []
-pilha_registro_de_vendas = []
+import os
 
+class Stack:
+    def __init__(self):
+        self.items = []
+
+    def push(self, item):
+        self.items.append(item)
+
+    def pop(self):
+        return self.items.pop()
+
+    def isEmpty(self):
+        return (self.items == [])
+
+class Queue:
+    def __init__(self):
+        self.items = []
+
+    def enqueue(self, item):
+        self.items.append(item)
+
+    def dequeue(self):
+        if not self.is_empty():
+            return self.items.pop(0)
+        else:
+            raise IndexError("A fila está vazia")
+
+    def is_empty(self):
+        return len(self.items) == 0
+
+    def size(self):
+        return len(self.items)
+
+def clear_console():
+    if os.name == 'posix':
+        os.system('clear')
+    elif os.name == 'nt':  
+        os.system('cls')
+    else:
+        print("Sistema operacional não suportado. Não é possível limpar o console.")
+
+estoque_de_produtos = []
+pedidos_de_compra = Queue()
+vendas = Stack()
 
 while True:
     print('----------------------------------//----------------------------------')
@@ -21,23 +62,43 @@ while True:
 
     match resposta:
         case 1:
-
-            break
+            tamanho_estoque = len(estoque_de_produtos)
+            produto = input("Produto que será adicionado ao estoque: ")
+            estoque_de_produtos.append(produto)
+            if tamanho_estoque < len(estoque_de_produtos):
+                clear_console()
+                print("\nProduto adicionado com sucesso!\n")
         case 2:
+            tamanho_estoque = len(estoque_de_produtos)
+            clear_console()
+            for i, produto in enumerate(estoque_de_produtos):
+                print(f"Produto {i}: {produto}")
 
-            break
+            print("Qual produto deseja remover? (digite o nome)")
+            produto_removido = input("R: ")
+            if produto_removido in estoque_de_produtos:
+                indice = estoque_de_produtos.index(produto_removido)
+                estoque_de_produtos.pop(indice)
+                clear_console()
+            else:
+                clear_console()
+                print(f"Produto {produto_removido} não encontrado no estoque.")
         case 3:
-
-            break
+            pedido = input("Seu pedido: ")
+            pedidos_de_compra.enqueue(pedido)
+            clear_console()
+            print("\nPedido registrado!\n")
+            
         case 4:
-
-            break
+            estoque_remover = pedidos_de_compra[0]
+            pedidos_de_compra.dequeue()
+            estoque_de_produtos.pop(estoque_remover)
+            print("Pedido processado. Estoque atualizado.")
         case 5:
-
-            break
+            venda = input("")
+            vendas.push()
         case 6:
-
-            break
+            input()
         case 7:
             print('Encerrando...')
             break
