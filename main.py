@@ -1,5 +1,6 @@
 import os
 
+
 class Stack:
     def __init__(self):
         self.items = []
@@ -13,9 +14,13 @@ class Stack:
     def isEmpty(self):
         return (self.items == [])
 
+    def __iter__(self):
+        return iter(self.items)  
+    
     def see_stack(self):
-        for i, item in enumerate(self):
+        for i, item in enumerate(self.items):
             print(f"{i + 1}º {item}")
+
 
 class Queue:
     def __init__(self):
@@ -47,7 +52,7 @@ class Queue:
 def clear_console():
     if os.name == 'posix':
         os.system('clear')
-    elif os.name == 'nt':  
+    elif os.name == 'nt':
         os.system('cls')
     else:
         print("Sistema operacional não suportado. Não é possível limpar o console.")
@@ -75,50 +80,70 @@ while True:
 
     match resposta:
         case 1:
-            tamanho_estoque = len(estoque_de_produtos)
             produto = input("Produto que será adicionado ao estoque: ")
             estoque_de_produtos.append(produto)
-            if tamanho_estoque < len(estoque_de_produtos):
-                clear_console()
-                print("\nProduto adicionado com sucesso!\n")
-        case 2:
-            tamanho_estoque = len(estoque_de_produtos)
             clear_console()
-            for i, produto in enumerate(estoque_de_produtos):
-                print(f"Produto {i}: {produto}")
+            print("\nProduto adicionado com sucesso!\n")
 
-            print("Qual produto deseja remover? (digite o nome)")
-            produto_removido = input("R: ")
-            if produto_removido in estoque_de_produtos:
-                indice = estoque_de_produtos.index(produto_removido)
-                estoque_de_produtos.pop(indice)
-                clear_console()
+        case 2:
+            clear_console()
+            print("Produtos no estoque:")
+            for i, produto in enumerate(estoque_de_produtos):
+                print(f"{i+1}. {produto}")
+            if estoque_de_produtos:
+                try:
+                    indice = int(
+                        input("Digite o número do produto que deseja remover: ")) - 1
+                    if 0 <= indice < len(estoque_de_produtos):
+                        produto_removido = estoque_de_produtos.pop(indice)
+                        clear_console()
+                        print(f"Produto '{produto_removido}' removido do estoque.")
+                    else:
+                        print("Índice fora do intervalo válido.")
+                except ValueError:
+                    print("Digite um número válido.")
             else:
-                clear_console()
-                print(f"Produto {produto_removido} não encontrado no estoque.")
+                print("Estoque vazio. Não há produtos para remover.")
+
         case 3:
-            pedido = input("Seu pedido: ")
+            pedido = input("Informe o produto que deseja comprar: ")
             pedidos_de_compra.enqueue(pedido)
             clear_console()
-            pedidos_de_compra.see_queue()
-            print("\nPedido registrado!\n")
-            
+            print(f"Pedido de '{pedido}' registrado.")
+
         case 4:
-            pedidos_de_compra.dequeue()
-            estoque_de_produtos.pop(0)
             clear_console()
-            pedidos_de_compra.see_queue()
-            print("Pedido processado. Estoque atualizado.")
+            if not pedidos_de_compra.is_empty():
+                produto_comprado = pedidos_de_compra.dequeue()
+                if produto_comprado in estoque_de_produtos:
+                    estoque_de_produtos.remove(produto_comprado)
+                    print(
+                        f"Pedido de compra para '{produto_comprado}' processado. Produto removido do estoque.")
+                else:
+                    print(f"Produto '{produto_comprado}' não encontrado no estoque.")
+            else:
+                print("Não há pedidos de compra para processar.")
+
         case 5:
-            venda = input('Digite o que foi vendido: ')
+            venda = input("Informe o produto vendido: ")
             if venda in estoque_de_produtos:
-                estoque_de_produtos.pop(venda)
                 vendas.push(venda)
-            clear_console()
-            vendas.see_stack()
-            print('Venda realizada. Estoque atualizado.')
+                estoque_de_produtos.remove(venda)
+                clear_console()
+                print(f"Venda registrada para '{venda}'. Produto removido do estoque.")
+            else:
+                print("Produto não encontrado no estoque.")
+
         case 6:
-            input()
+            clear_console()
+            if not vendas.isEmpty():
+                produto_devolvido = vendas.pop()
+                estoque_de_produtos.append(produto_devolvido)
+                print(
+                    f"Última venda de '{produto_devolvido}' desfeita. Produto devolvido ao estoque.")
+            else:
+                print("Não há vendas para desfazer.")
+
         case 7:
             print('Encerrando...')
             break
